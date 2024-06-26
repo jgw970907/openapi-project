@@ -1,7 +1,6 @@
 import { displayError, displayNoResults } from "./script.js";
 import ListDisplay from "./script.js";
 const apiUrl = "https://openapi.gg.go.kr/JobFndtnTosAct";
-const apiKey = "";
 
 let currentPage = 1;
 const itemsPerPage = 10;
@@ -14,49 +13,54 @@ $(document).ready(function () {
 });
 
 function fetchMoreData(page = 1) {
-  if (isLoading) return;
-  isLoading = true;
+  $.get("/.netlify/functions/get-api-external", function (data) {
+    const apiKey = data.apiKey;
+    if (isLoading) return;
+    isLoading = true;
 
-  let params = {
-    KEY: apiKey,
-    Type: "json",
-    pIndex: page,
-    pSize: itemsPerPage,
-  };
+    let params = {
+      KEY: apiKey,
+      Type: "json",
+      pIndex: page,
+      pSize: itemsPerPage,
+    };
 
-  $.ajax({
-    url: apiUrl,
-    type: "GET",
-    data: params,
-    dataType: "json",
-    success: function (response) {
-      console.log("Data fetched successfully:", response);
+    $.ajax({
+      url: apiUrl,
+      type: "GET",
+      data: params,
+      dataType: "json",
+      success: function (response) {
+        console.log("Data fetched successfully:", response);
 
-      if (
-        response &&
-        response.JobFndtnTosAct &&
-        response.JobFndtnTosAct.length > 0 &&
-        response.JobFndtnTosAct[1].row
-      ) {
-        const externalData = response.JobFndtnTosAct[1].row;
-        listTotalCount = response.JobFndtnTosAct[0].head[0].list_total_count;
-        displayExternalData(externalData);
-        listDisplay.displayListTotalCnt(listTotalCount);
-        if (listTotalCount <= currentPage * itemsPerPage) {
-          $(window).off("scroll", handleScroll);
+        if (
+          response &&
+          response.JobFndtnTosAct &&
+          response.JobFndtnTosAct.length > 0 &&
+          response.JobFndtnTosAct[1].row
+        ) {
+          const externalData = response.JobFndtnTosAct[1].row;
+          listTotalCount = response.JobFndtnTosAct[0].head[0].list_total_count;
+          displayExternalData(externalData);
+          listDisplay.displayListTotalCnt(listTotalCount);
+          if (listTotalCount <= currentPage * itemsPerPage) {
+            $(window).off("scroll", handleScroll);
+          }
+        } else {
+          console.error("No external data available or unexpected response");
+          displayNoResults();
         }
-      } else {
-        console.error("No external data available or unexpected response");
-        displayNoResults();
-      }
-    },
-    error: function (xhr, status, error) {
-      console.error("Error fetching data:", status, error);
-      displayError();
-    },
-    complete: function () {
-      isLoading = false;
-    },
+      },
+      error: function (xhr, status, error) {
+        console.error("Error fetching data:", status, error);
+        displayError();
+      },
+      complete: function () {
+        isLoading = false;
+      },
+    });
+  }).fail(function (error) {
+    console.error("Error fetching API key", error);
   });
 }
 

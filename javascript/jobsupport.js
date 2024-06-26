@@ -1,7 +1,6 @@
 import { displayError, displayNoResults } from "./script.js";
 import ListDisplay from "./script.js";
 const apiUrl = "https://openapi.gg.go.kr/JobFndtnSportPolocy";
-const apiKey = "";
 
 let currentPage = 1;
 const itemsPerPage = 10;
@@ -14,51 +13,55 @@ $(document).ready(function () {
 });
 
 function fetchMoreData(page = 1) {
-  if (isLoading) return;
-  isLoading = true;
+  $.get("/.netlify/functions/get-api-support", function (data) {
+    if (isLoading) return;
+    isLoading = true;
 
-  let params = {
-    KEY: apiKey,
-    Type: "json",
-    pIndex: page,
-    pSize: itemsPerPage,
-  };
+    let params = {
+      KEY: apiKey,
+      Type: "json",
+      pIndex: page,
+      pSize: itemsPerPage,
+    };
 
-  $.ajax({
-    url: apiUrl,
-    type: "GET",
-    data: params,
-    dataType: "json",
-    success: function (response) {
-      console.log("Data fetched successfully:", response);
+    $.ajax({
+      url: apiUrl,
+      type: "GET",
+      data: params,
+      dataType: "json",
+      success: function (response) {
+        console.log("Data fetched successfully:", response);
 
-      if (
-        response &&
-        response.JobFndtnSportPolocy &&
-        response.JobFndtnSportPolocy.length > 0 &&
-        response.JobFndtnSportPolocy[1].row
-      ) {
-        const supportData = response.JobFndtnSportPolocy[1].row;
-        listTotalCount =
-          response.JobFndtnSportPolocy[0].head[0].list_total_count;
-        displaySupportData(supportData);
+        if (
+          response &&
+          response.JobFndtnSportPolocy &&
+          response.JobFndtnSportPolocy.length > 0 &&
+          response.JobFndtnSportPolocy[1].row
+        ) {
+          const supportData = response.JobFndtnSportPolocy[1].row;
+          listTotalCount =
+            response.JobFndtnSportPolocy[0].head[0].list_total_count;
+          displaySupportData(supportData);
 
-        listDisplay.displayListTotalCnt(listTotalCount);
-        if (listTotalCount <= currentPage * itemsPerPage) {
-          $(window).off("scroll", handleScroll);
+          listDisplay.displayListTotalCnt(listTotalCount);
+          if (listTotalCount <= currentPage * itemsPerPage) {
+            $(window).off("scroll", handleScroll);
+          }
+        } else {
+          console.error("No external data available or unexpected response");
+          displayNoResults();
         }
-      } else {
-        console.error("No external data available or unexpected response");
-        displayNoResults();
-      }
-    },
-    error: function (xhr, status, error) {
-      console.error("Error fetching data:", status, error);
-      displayError();
-    },
-    complete: function () {
-      isLoading = false;
-    },
+      },
+      error: function (xhr, status, error) {
+        console.error("Error fetching data:", status, error);
+        displayError();
+      },
+      complete: function () {
+        isLoading = false;
+      },
+    });
+  }).fail(function (error) {
+    console.error("Error fetching API key", error);
   });
 }
 

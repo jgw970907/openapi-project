@@ -1,7 +1,7 @@
 import { displayError, displayNoResults } from "./script.js";
 import ListDisplay from "./script.js";
 const apiUrl = "https://openapi.gg.go.kr/JobFndtnEduTraing";
-const apiKey = "";
+
 let currentPage = 1;
 const itemsPerPage = 10;
 let listTotalCount = 0;
@@ -14,40 +14,46 @@ $(document).ready(function () {
   fetchMoreData();
 });
 function fetchMoreData(page = 1) {
-  let params = {
-    KEY: apiKey,
-    Type: "json",
-    pIndex: page,
-    pSize: itemsPerPage,
-  };
+  $.get("/.netlify/functions/get-api-edu", function (data) {
+    const apiKey = data.apiKey;
+    let params = {
+      KEY: apiKey,
+      Type: "json",
+      pIndex: page,
+      pSize: itemsPerPage,
+    };
 
-  $.ajax({
-    url: apiUrl,
-    type: "GET",
-    data: params,
-    dataType: "json",
-    success: function (response) {
-      console.log("Daata fetched successfully", response);
-      if (
-        response &&
-        response.JobFndtnEduTraing &&
-        response.JobFndtnEduTraing.length > 0 &&
-        response.JobFndtnEduTraing[1].row
-      ) {
-        const trainData = response.JobFndtnEduTraing[1].row;
-        listTotalCount = response.JobFndtnEduTraing[0].head[0].list_total_count;
-        displayTrain(trainData);
-        updateLoadMoreButton();
-        listDisplay.displayListTotalCnt(listTotalCount);
-      } else {
-        console.error("No train data available or unexpected response");
-        displayNoResults();
-      }
-    },
-    error: function (xhr, status, error) {
-      console.error("Error fetching data:", status, error);
-      displayError();
-    },
+    $.ajax({
+      url: apiUrl,
+      type: "GET",
+      data: params,
+      dataType: "json",
+      success: function (response) {
+        console.log("Daata fetched successfully", response);
+        if (
+          response &&
+          response.JobFndtnEduTraing &&
+          response.JobFndtnEduTraing.length > 0 &&
+          response.JobFndtnEduTraing[1].row
+        ) {
+          const trainData = response.JobFndtnEduTraing[1].row;
+          listTotalCount =
+            response.JobFndtnEduTraing[0].head[0].list_total_count;
+          displayTrain(trainData);
+          updateLoadMoreButton();
+          listDisplay.displayListTotalCnt(listTotalCount);
+        } else {
+          console.error("No train data available or unexpected response");
+          displayNoResults();
+        }
+      },
+      error: function (xhr, status, error) {
+        console.error("Error fetching data:", status, error);
+        displayError();
+      },
+    });
+  }).fail(function (error) {
+    console.error("Error fetching API key", error);
   });
 }
 
