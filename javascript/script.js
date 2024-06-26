@@ -51,56 +51,45 @@ $(document).ready(function () {
   });
 });
 
-export function fetchData(page = 1, query = "", queryType = "") {
-  let params = {
-    KEY: apiKey,
-    Type: "json",
-    pIndex: page,
-    pSize: itemsPerPage,
-  };
+function fetchData(page = 1, query = "", queryType = "") {
+  $.get("/.netlify/functions/get-api-key", function (data) {
+    const apiKey = data.apiKey;
+    let params = {
+      KEY: apiKey,
+      Type: "json",
+      pIndex: page,
+      pSize: 5,
+    };
 
-  if (query && queryType) {
-    if (queryType === "enterprise") {
-      params = {
-        ...params,
-        ENTRPRS_NM: query,
-      };
-    } else if (queryType === "noticeName") {
-      params = {
-        ...params,
-        PBANC_CONT: query,
-      };
-    }
-  }
-  $.ajax({
-    url: apiUrl,
-    type: "GET",
-    data: params,
-    dataType: "json",
-    success: function (response) {
-      console.log("Data fetched successfully:", response);
-
-      if (
-        response &&
-        response.GGJOBABARECRUSTM &&
-        Array.isArray(response.GGJOBABARECRUSTM) &&
-        response.GGJOBABARECRUSTM.length > 1 &&
-        response.GGJOBABARECRUSTM[1].row
-      ) {
-        const jobData = response.GGJOBABARECRUSTM[1].row;
-        listTotalCount = response.GGJOBABARECRUSTM[0].head[0].list_total_count;
-        displayJobs(jobData);
-        listDisplay.displayListTotalCnt(listTotalCount);
-        updatePagination(page);
-      } else {
-        console.error("No job data available or unexpected response format");
-        displayNoResults();
+    if (query && queryType) {
+      if (queryType === "enterprise") {
+        params = {
+          ...params,
+          ENTRPRS_NM: query,
+        };
+      } else if (queryType === "noticeName") {
+        params = {
+          ...params,
+          PBANC_CONT: query,
+        };
       }
-    },
-    error: function (xhr, status, error) {
-      console.error("Error fetching data:", status, error);
-      displayError();
-    },
+    }
+
+    $.ajax({
+      url: "https://openapi.gg.go.kr/GGJOBABARECRUSTM",
+      type: "GET",
+      data: params,
+      dataType: "json",
+      success: function (response) {
+        console.log("Data fetched successfully:", response);
+        // handle data
+      },
+      error: function (xhr, status, error) {
+        console.error("Error fetching data:", status, error);
+      },
+    });
+  }).fail(function (error) {
+    console.error("Error fetching API key", error);
   });
 }
 export function displayJobs(jobs) {
