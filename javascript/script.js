@@ -51,13 +51,14 @@ $(document).ready(function () {
 export function fetchData(page = 1, query = "", queryType = "") {
   $.get("/.netlify/functions/get-api-key", function (data) {
     const apiKey = data.apiKey;
+    console.log("Fetched API Key:", apiKey); // 디버깅 로그 추가
     let params = {
       KEY: apiKey,
       Type: "json",
       pIndex: page,
       pSize: 5,
     };
-
+    console.log("Requesting page:", page, "with params:", params); // 디버깅 로그 추가
     if (query && queryType) {
       if (queryType === "enterprise") {
         params = {
@@ -77,6 +78,7 @@ export function fetchData(page = 1, query = "", queryType = "") {
       type: "GET",
       data: params,
       dataType: "json",
+      cache: false,
       success: function (response) {
         console.log("Data fetched successfully:", response);
         if (
@@ -201,6 +203,7 @@ function updatePagination(currentPage) {
     const page = $(this).data("page");
     const query = $("#searchInput").val();
     const searchType = $("#searchType").val();
+    console.log("Fetching page:", page); // 디버깅 로그 추가
     fetchData(page, query, searchType);
   });
 }
