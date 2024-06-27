@@ -50,7 +50,7 @@ $(document).ready(function () {
 
 export function fetchData(page = 1, query = "", queryType = "") {
   $.get("/.netlify/functions/get-api-key", function (data) {
-    const apiKey = data.apiKey;
+    let apiKey = data.apiKey;
     console.log("Fetched API Key:", apiKey); // 디버깅 로그 추가
     let params = {
       KEY: apiKey,

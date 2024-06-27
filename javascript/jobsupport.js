@@ -14,7 +14,7 @@ $(document).ready(function () {
 
 function fetchMoreData(page = 1) {
   $.get("/.netlify/functions/get-api-support", function (data) {
-    const apiKey = data.apiKey;
+    let apiKey = data.apiKey;
     if (isLoading) return;
     isLoading = true;
 
