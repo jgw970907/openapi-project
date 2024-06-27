@@ -1,15 +1,17 @@
 import { displayError, displayNoResults } from "./script.js";
 import ListDisplay from "./script.js";
-const apiUrl = "https://openapi.gg.go.kr/JobFndtnTosAct";
 
-let currentPage = 1;
+const apiUrl = "https://openapi.gg.go.kr/JobFndtnTosAct";
 const itemsPerPage = 10;
+let currentPage = 1;
 let listTotalCount = 0;
 let isLoading = false;
 let apiKey = ""; // 전역 변수로 API 키를 선언
 const listDisplay = new ListDisplay();
+
 $(document).ready(function () {
-  fetchMoreData(1);
+  // 초기 API 키 요청 후 데이터 가져오기
+  getApiKey(fetchInitialData);
 });
 
 // 서버에서 API 키를 가져오는 함수
@@ -22,17 +24,14 @@ function getApiKey(callback) {
   });
 }
 
-// 초기 API 키 요청
-getApiKey(fetchInitialData);
-
 // 초기 데이터를 가져오는 함수
 function fetchInitialData() {
-  fetchMoreData(1); // 초기 데이터 요청
+  fetchMoreData(currentPage); // 초기 데이터 요청
   $(window).on("scroll", handleScroll); // 스크롤 이벤트 핸들러 등록
 }
 
 // 추가 데이터를 가져오는 함수
-function fetchMoreData(page = 1) {
+function fetchMoreData(page) {
   if (!apiKey) {
     console.error("API key is not available yet");
     return;
