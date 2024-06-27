@@ -11,14 +11,30 @@ const listDisplay = new ListDisplay();
 
 $(document).ready(function () {
   // 초기 API 키 요청 후 데이터 가져오기
-  fetchInitialData();
+  fetchApiKeyAndData();
 });
 
-// 서버에서 API 키를 가져오는 함수 (async/await 사용)
-async function getApiKey() {
+// 서버에서 API 키를 가져오고 데이터를 요청하는 함수
+async function fetchApiKeyAndData() {
   try {
-    const response = await $.get("/.netlify/functions/get-api-external");
-    return response.apiKey;
+    const apiKeyResponse = await fetchApiKey(); // API 키 요청
+    apiKey = apiKeyResponse.apiKey; // 받아온 API 키 설정
+    await fetchInitialData(); // 초기 데이터 요청
+    $(window).on("scroll", handleScroll); // 스크롤 이벤트 핸들러 등록
+  } catch (error) {
+    displayError(); // 오류 발생 시 에러 표시
+  }
+}
+
+// 서버에서 API 키를 가져오는 함수 (async/await 사용)
+async function fetchApiKey() {
+  try {
+    const response = await fetch("/.netlify/functions/get-api-external");
+    if (!response.ok) {
+      throw new Error("Failed to fetch API key");
+    }
+    const data = await response.json();
+    return data;
   } catch (error) {
     console.error("Error fetching API key", error);
     throw error;
@@ -28,10 +44,7 @@ async function getApiKey() {
 // 초기 데이터를 가져오는 함수
 async function fetchInitialData() {
   try {
-    apiKey = await getApiKey(); // API 키를 받아옴
-    console.log(apiKey);
     await fetchMoreData(currentPage); // 초기 데이터 요청
-    $(window).on("scroll", handleScroll); // 스크롤 이벤트 핸들러 등록
   } catch (error) {
     displayError(); // 오류 발생 시 에러 표시
   }
@@ -55,23 +68,25 @@ async function fetchMoreData(page) {
   };
 
   try {
-    const response = await $.ajax({
-      url: apiUrl,
-      type: "GET",
-      data: params,
-      dataType: "json",
-    });
+    const url = new URL(apiUrl);
+    url.search = new URLSearchParams(params).toString();
 
-    console.log("Data fetched successfully:", response);
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error("Failed to fetch data");
+    }
+    const data = await response.json();
+
+    console.log("Data fetched successfully:", data);
 
     if (
-      response &&
-      response.JobFndtnTosAct &&
-      response.JobFndtnTosAct.length > 0 &&
-      response.JobFndtnTosAct[1].row
+      data &&
+      data.JobFndtnTosAct &&
+      data.JobFndtnTosAct.length > 0 &&
+      data.JobFndtnTosAct[1].row
     ) {
-      const externalData = response.JobFndtnTosAct[1].row;
-      listTotalCount = response.JobFndtnTosAct[0].head[0].list_total_count;
+      const externalData = data.JobFndtnTosAct[1].row;
+      listTotalCount = data.JobFndtnTosAct[0].head[0].list_total_count;
       displayExternalData(externalData);
       listDisplay.displayListTotalCnt(listTotalCount);
       if (listTotalCount <= currentPage * itemsPerPage) {
