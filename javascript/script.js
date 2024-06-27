@@ -46,7 +46,6 @@ $(document).ready(function () {
       $(this).addClass("current");
     }
   });
-  fetchData();
 });
 
 export function fetchData(page = 1, query = "", queryType = "") {
@@ -205,5 +204,5 @@ function updatePagination(currentPage) {
     fetchData(page, query, searchType);
   });
 }
-
+fetchData();
 export default ListDisplay;
