@@ -221,5 +221,4 @@ function updatePagination(currentPage) {
     fetchData(page, query, searchType);
   });
 }
-fetchData();
 export default ListDisplay;
