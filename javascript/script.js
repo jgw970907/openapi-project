@@ -1,6 +1,9 @@
+import { fetchApiKey } from "./fetchApiKey";
+
 const itemsPerPage = 5;
+let currentPage = 1;
 let listTotalCount = 0;
-const apiKey = "e53031e5f553400985f7d3b71285f16e";
+let apiKey = "";
 class ListDisplay {
   constructor() {
     this.elementId = "#list-total-count";
@@ -36,7 +39,6 @@ class ListDisplay {
     }
   }
 }
-
 const listDisplay = new ListDisplay();
 $(document).ready(function () {
   const currentPage = window.location.pathname.split("/").pop();
@@ -47,16 +49,25 @@ $(document).ready(function () {
       $(this).addClass("current");
     }
   });
+  fetchApiKeyAndData();
 });
-
-export function fetchData(page = 1, query = "", queryType = "") {
-  if (!apiKey) {
-    console.error("API key not available");
-    displayError(); // 에러 메시지 표시 또는 다른 처리
-    return; // API 키가 없으면 여기서 함수 종료
+async function fetchApiKeyAndData() {
+  try {
+    const apiKeyResponse = await fetchApiKey("external");
+    apiKey = apiKeyResponse.apiKey;
+    await fetchInitialData();
+  } catch (error) {
+    displayError();
   }
-
-  console.log("Fetched API Key:", apiKey); // 디버깅 로그 추가
+}
+async function fetchInitialData() {
+  try {
+    await fetchData(currentPage);
+  } catch (error) {
+    displayError();
+  }
+}
+export async function fetchData(page = 1, query = "", queryType = "") {
   let params = {
     KEY: apiKey,
     Type: "json",
