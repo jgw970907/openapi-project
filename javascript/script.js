@@ -1,5 +1,6 @@
 const itemsPerPage = 5;
 let listTotalCount = 0;
+const apiKey = "e53031e5f553400985f7d3b71285f16e";
 class ListDisplay {
   constructor() {
     this.elementId = "#list-total-count";
@@ -49,62 +50,64 @@ $(document).ready(function () {
 });
 
 export function fetchData(page = 1, query = "", queryType = "") {
-  $.get("/.netlify/functions/get-api-key", function (data) {
-    let apiKey = data.apiKey;
-    console.log("Fetched API Key:", apiKey); // 디버깅 로그 추가
-    let params = {
-      KEY: apiKey,
-      Type: "json",
-      pIndex: page,
-      pSize: 5,
-    };
-    console.log("Requesting page:", page, "with params:", params); // 디버깅 로그 추가
-    if (query && queryType) {
-      if (queryType === "enterprise") {
-        params = {
-          ...params,
-          ENTRPRS_NM: query,
-        };
-      } else if (queryType === "noticeName") {
-        params = {
-          ...params,
-          PBANC_CONT: query,
-        };
-      }
-    }
+  if (!apiKey) {
+    console.error("API key not available");
+    displayError(); // 에러 메시지 표시 또는 다른 처리
+    return; // API 키가 없으면 여기서 함수 종료
+  }
 
-    $.ajax({
-      url: "https://openapi.gg.go.kr/GGJOBABARECRUSTM",
-      type: "GET",
-      data: params,
-      dataType: "json",
-      cache: false,
-      success: function (response) {
-        console.log("Data fetched successfully:", response);
-        if (
-          response &&
-          response.GGJOBABARECRUSTM &&
-          Array.isArray(response.GGJOBABARECRUSTM) &&
-          response.GGJOBABARECRUSTM.length > 1 &&
-          response.GGJOBABARECRUSTM[1].row
-        ) {
-          const jobData = response.GGJOBABARECRUSTM[1].row;
-          listTotalCount =
-            response.GGJOBABARECRUSTM[0].head[0].list_total_count;
-          displayJobs(jobData);
-          listDisplay.displayListTotalCnt(listTotalCount);
-          updatePagination(page);
-        } else {
-          console.error("No job data available or unexpected response format");
-          displayNoResults();
-        }
-      },
-      error: function (xhr, status, error) {
-        console.error("Error fetching data:", status, error);
-      },
-    });
-  }).fail(function (error) {
-    console.error("Error fetching API key", error);
+  console.log("Fetched API Key:", apiKey); // 디버깅 로그 추가
+  let params = {
+    KEY: apiKey,
+    Type: "json",
+    pIndex: page,
+    pSize: 5,
+  };
+  console.log("Requesting page:", page, "with params:", params); // 디버깅 로그 추가
+
+  if (query && queryType) {
+    if (queryType === "enterprise") {
+      params = {
+        ...params,
+        ENTRPRS_NM: query,
+      };
+    } else if (queryType === "noticeName") {
+      params = {
+        ...params,
+        PBANC_CONT: query,
+      };
+    }
+  }
+
+  $.ajax({
+    url: "https://openapi.gg.go.kr/GGJOBABARECRUSTM",
+    type: "GET",
+    data: params,
+    dataType: "json",
+    cache: false,
+    success: function (response) {
+      console.log("Data fetched successfully:", response);
+      if (
+        response &&
+        response.GGJOBABARECRUSTM &&
+        Array.isArray(response.GGJOBABARECRUSTM) &&
+        response.GGJOBABARECRUSTM.length > 1 &&
+        response.GGJOBABARECRUSTM[1].row
+      ) {
+        const jobData = response.GGJOBABARECRUSTM[1].row;
+        listTotalCount = response.GGJOBABARECRUSTM[0].head[0].list_total_count;
+        displayJobs(jobData);
+        listDisplay.displayListTotalCnt(listTotalCount);
+        updatePagination(page);
+      } else {
+        console.error("No job data available or unexpected response format");
+        displayNoResults();
+      }
+    },
+    error: function (xhr, status, error) {
+      console.error("Error fetching data:", status, error);
+      displayError(); // 에러 메시지 표시 또는 다른 처리
+    },
   });
 }
 export function displayJobs(jobs) {
