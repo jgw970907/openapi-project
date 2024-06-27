@@ -1,68 +1,84 @@
 import { displayError, displayNoResults } from "./script.js";
+import { fetchApiKey } from "./fetchApiKey.js";
 import ListDisplay from "./script.js";
 const apiUrl = "https://openapi.gg.go.kr/JobFndtnSportPolocy";
 
 let currentPage = 1;
 const itemsPerPage = 10;
 let listTotalCount = 0;
+let apiKey = "";
 let isLoading = false;
 const listDisplay = new ListDisplay();
 
 $(document).ready(function () {
-  fetchMoreData();
+  fetchApiKeyAndData();
 });
 
-function fetchMoreData(page = 1) {
-  $.get("/.netlify/functions/get-api-support", function (data) {
-    let apiKey = data.apiKey;
-    if (isLoading) return;
-    isLoading = true;
+async function fetchApiKeyAndData() {
+  try {
+    const apiKeyResponse = await fetchApiKey("external");
+    apiKey = apiKeyResponse.apiKey;
+    await fetchInitialData();
+    $(window).on("scroll", handleScroll);
+  } catch (error) {
+    displayError();
+  }
+}
 
-    let params = {
-      KEY: apiKey,
-      Type: "json",
-      pIndex: page,
-      pSize: itemsPerPage,
-    };
+async function fetchInitialData() {
+  try {
+    await fetchMoreData(currentPage);
+  } catch (error) {
+    displayError();
+  }
+}
 
-    $.ajax({
-      url: apiUrl,
-      type: "GET",
-      data: params,
-      dataType: "json",
-      success: function (response) {
-        console.log("Data fetched successfully:", response);
+async function fetchMoreData(page = 1) {
+  if (isLoading) return;
+  isLoading = true;
 
-        if (
-          response &&
-          response.JobFndtnSportPolocy &&
-          response.JobFndtnSportPolocy.length > 0 &&
-          response.JobFndtnSportPolocy[1].row
-        ) {
-          const supportData = response.JobFndtnSportPolocy[1].row;
-          listTotalCount =
-            response.JobFndtnSportPolocy[0].head[0].list_total_count;
-          displaySupportData(supportData);
+  let params = {
+    KEY: apiKey,
+    Type: "json",
+    pIndex: page,
+    pSize: itemsPerPage,
+  };
 
-          listDisplay.displayListTotalCnt(listTotalCount);
-          if (listTotalCount <= currentPage * itemsPerPage) {
-            $(window).off("scroll", handleScroll);
-          }
-        } else {
-          console.error("No external data available or unexpected response");
-          displayNoResults();
+  $.ajax({
+    url: apiUrl,
+    type: "GET",
+    data: params,
+    dataType: "json",
+    success: function (response) {
+      console.log("Data fetched successfully:", response);
+
+      if (
+        response &&
+        response.JobFndtnSportPolocy &&
+        response.JobFndtnSportPolocy.length > 0 &&
+        response.JobFndtnSportPolocy[1].row
+      ) {
+        const supportData = response.JobFndtnSportPolocy[1].row;
+        listTotalCount =
+          response.JobFndtnSportPolocy[0].head[0].list_total_count;
+        displaySupportData(supportData);
+
+        listDisplay.displayListTotalCnt(listTotalCount);
+        if (listTotalCount <= currentPage * itemsPerPage) {
+          $(window).off("scroll", handleScroll);
         }
-      },
-      error: function (xhr, status, error) {
-        console.error("Error fetching data:", status, error);
-        displayError();
-      },
-      complete: function () {
-        isLoading = false;
-      },
-    });
-  }).fail(function (error) {
-    console.error("Error fetching API key", error);
+      } else {
+        console.error("No external data available or unexpected response");
+        displayNoResults();
+      }
+    },
+    error: function (xhr, status, error) {
+      console.error("Error fetching data:", status, error);
+      displayError();
+    },
+    complete: function () {
+      isLoading = false;
+    },
   });
 }
 

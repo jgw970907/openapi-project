@@ -21,7 +21,6 @@ async function fetchApiKeyAndData() {
     const apiKeyResponse = await fetchApiKey("edu");
     apiKey = apiKeyResponse.apiKey;
     await fetchInitialData();
-    $(window).on("scroll", handleScroll);
   } catch (error) {
     displayError();
   }
