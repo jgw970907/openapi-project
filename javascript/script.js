@@ -53,7 +53,7 @@ $(document).ready(function () {
 });
 async function fetchApiKeyAndData() {
   try {
-    const apiKeyResponse = await fetchApiKey("external");
+    const apiKeyResponse = await fetchApiKey("key");
     apiKey = apiKeyResponse.apiKey;
     await fetchInitialData();
   } catch (error) {
