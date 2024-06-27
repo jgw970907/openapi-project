@@ -6,61 +6,81 @@ let currentPage = 1;
 const itemsPerPage = 10;
 let listTotalCount = 0;
 let isLoading = false;
+let apiKey = ""; // 전역 변수로 API 키를 선언
 const listDisplay = new ListDisplay();
-
 $(document).ready(function () {
-  fetchMoreData();
+  fetchMoreData(1);
 });
 
-function fetchMoreData(page = 1) {
+// 서버에서 API 키를 가져오는 함수
+function getApiKey(callback) {
   $.get("/.netlify/functions/get-api-external", function (data) {
-    let apiKey = data.apiKey;
-    if (isLoading) return;
-    isLoading = true;
-
-    let params = {
-      KEY: apiKey,
-      Type: "json",
-      pIndex: page,
-      pSize: itemsPerPage,
-    };
-
-    $.ajax({
-      url: apiUrl,
-      type: "GET",
-      data: params,
-      dataType: "json",
-      success: function (response) {
-        console.log("Data fetched successfully:", response);
-
-        if (
-          response &&
-          response.JobFndtnTosAct &&
-          response.JobFndtnTosAct.length > 0 &&
-          response.JobFndtnTosAct[1].row
-        ) {
-          const externalData = response.JobFndtnTosAct[1].row;
-          listTotalCount = response.JobFndtnTosAct[0].head[0].list_total_count;
-          displayExternalData(externalData);
-          listDisplay.displayListTotalCnt(listTotalCount);
-          if (listTotalCount <= currentPage * itemsPerPage) {
-            $(window).off("scroll", handleScroll);
-          }
-        } else {
-          console.error("No external data available or unexpected response");
-          displayNoResults();
-        }
-      },
-      error: function (xhr, status, error) {
-        console.error("Error fetching data:", status, error);
-        displayError();
-      },
-      complete: function () {
-        isLoading = false;
-      },
-    });
+    apiKey = data.apiKey;
+    if (callback) callback();
   }).fail(function (error) {
     console.error("Error fetching API key", error);
+  });
+}
+
+// 초기 API 키 요청
+getApiKey(fetchInitialData);
+
+// 초기 데이터를 가져오는 함수
+function fetchInitialData() {
+  fetchMoreData(1); // 초기 데이터 요청
+  $(window).on("scroll", handleScroll); // 스크롤 이벤트 핸들러 등록
+}
+
+// 추가 데이터를 가져오는 함수
+function fetchMoreData(page = 1) {
+  if (!apiKey) {
+    console.error("API key is not available yet");
+    return;
+  }
+
+  if (isLoading) return;
+  isLoading = true;
+
+  let params = {
+    KEY: apiKey,
+    Type: "json",
+    pIndex: page,
+    pSize: itemsPerPage,
+  };
+
+  $.ajax({
+    url: apiUrl,
+    type: "GET",
+    data: params,
+    dataType: "json",
+    success: function (response) {
+      console.log("Data fetched successfully:", response);
+
+      if (
+        response &&
+        response.JobFndtnTosAct &&
+        response.JobFndtnTosAct.length > 0 &&
+        response.JobFndtnTosAct[1].row
+      ) {
+        const externalData = response.JobFndtnTosAct[1].row;
+        listTotalCount = response.JobFndtnTosAct[0].head[0].list_total_count;
+        displayExternalData(externalData);
+        listDisplay.displayListTotalCnt(listTotalCount);
+        if (listTotalCount <= currentPage * itemsPerPage) {
+          $(window).off("scroll", handleScroll);
+        }
+      } else {
+        console.error("No external data available or unexpected response");
+        displayNoResults();
+      }
+    },
+    error: function (xhr, status, error) {
+      console.error("Error fetching data:", status, error);
+      displayError();
+    },
+    complete: function () {
+      isLoading = false;
+    },
   });
 }
 
