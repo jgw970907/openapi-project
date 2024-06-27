@@ -29,6 +29,7 @@ async function getApiKey() {
 async function fetchInitialData() {
   try {
     apiKey = await getApiKey(); // API 키를 받아옴
+    console.log(apiKey);
     await fetchMoreData(currentPage); // 초기 데이터 요청
     $(window).on("scroll", handleScroll); // 스크롤 이벤트 핸들러 등록
   } catch (error) {
@@ -39,7 +40,7 @@ async function fetchInitialData() {
 // 추가 데이터를 가져오는 함수
 async function fetchMoreData(page) {
   if (!apiKey) {
-    console.error("API key is not available yet");
+    console.error("API key is not available yet", apiKey);
     return;
   }
 
