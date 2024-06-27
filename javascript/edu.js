@@ -5,13 +5,15 @@ const apiUrl = "https://openapi.gg.go.kr/JobFndtnEduTraing";
 let currentPage = 1;
 const itemsPerPage = 10;
 let listTotalCount = 0;
+let apiKey = "";
 const listDisplay = new ListDisplay();
+
 $("#loadMoreBtn").on("click", function () {
   currentPage++;
   fetchMoreData(currentPage);
 });
 $(document).ready(function () {
-  fetchMoreData();
+  fetchApiKeyAndData();
 });
 function fetchMoreData(page = 1) {
   $.get("/.netlify/functions/get-api-edu", function (data) {

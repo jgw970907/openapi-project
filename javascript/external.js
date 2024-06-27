@@ -1,4 +1,5 @@
 import { displayError, displayNoResults } from "./script.js";
+import { fetchApiKey } from "./fetchApiKey.js";
 import ListDisplay from "./script.js";
 
 const apiUrl = "https://openapi.gg.go.kr/JobFndtnTosAct";
@@ -17,27 +18,12 @@ $(document).ready(function () {
 // 서버에서 API 키를 가져오고 데이터를 요청하는 함수
 async function fetchApiKeyAndData() {
   try {
-    const apiKeyResponse = await fetchApiKey(); // API 키 요청
+    const apiKeyResponse = await fetchApiKey("external"); // API 키 요청
     apiKey = apiKeyResponse.apiKey; // 받아온 API 키 설정
     await fetchInitialData(); // 초기 데이터 요청
     $(window).on("scroll", handleScroll); // 스크롤 이벤트 핸들러 등록
   } catch (error) {
     displayError(); // 오류 발생 시 에러 표시
-  }
-}
-
-// 서버에서 API 키를 가져오는 함수 (async/await 사용)
-async function fetchApiKey() {
-  try {
-    const response = await fetch("/.netlify/functions/get-api-external");
-    if (!response.ok) {
-      throw new Error("Failed to fetch API key");
-    }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error fetching API key", error);
-    throw error;
   }
 }
 
