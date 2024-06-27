@@ -38,11 +38,6 @@ async function fetchInitialData() {
 
 // 추가 데이터를 가져오는 함수
 async function fetchMoreData(page) {
-  if (!apiKey) {
-    console.error("API key is not available yet", apiKey);
-    return;
-  }
-
   if (isLoading) return;
   isLoading = true;
 
