@@ -1,4 +1,4 @@
-import { fetchApiKey } from "./fetchApiKey";
+import { fetchApiKey } from "./fetchApiKey.js";
 
 const itemsPerPage = 5;
 let currentPage = 1;
