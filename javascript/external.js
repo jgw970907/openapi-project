@@ -11,27 +11,33 @@ const listDisplay = new ListDisplay();
 
 $(document).ready(function () {
   // 초기 API 키 요청 후 데이터 가져오기
-  getApiKey(fetchInitialData);
+  fetchInitialData();
 });
 
-// 서버에서 API 키를 가져오는 함수
-function getApiKey(callback) {
-  $.get("/.netlify/functions/get-api-external", function (data) {
-    apiKey = data.apiKey;
-    if (callback) callback();
-  }).fail(function (error) {
+// 서버에서 API 키를 가져오는 함수 (async/await 사용)
+async function getApiKey() {
+  try {
+    const response = await $.get("/.netlify/functions/get-api-external");
+    return response.apiKey;
+  } catch (error) {
     console.error("Error fetching API key", error);
-  });
+    throw error;
+  }
 }
 
 // 초기 데이터를 가져오는 함수
-function fetchInitialData() {
-  fetchMoreData(currentPage); // 초기 데이터 요청
-  $(window).on("scroll", handleScroll); // 스크롤 이벤트 핸들러 등록
+async function fetchInitialData() {
+  try {
+    apiKey = await getApiKey(); // API 키를 받아옴
+    await fetchMoreData(currentPage); // 초기 데이터 요청
+    $(window).on("scroll", handleScroll); // 스크롤 이벤트 핸들러 등록
+  } catch (error) {
+    displayError(); // 오류 발생 시 에러 표시
+  }
 }
 
 // 추가 데이터를 가져오는 함수
-function fetchMoreData(page) {
+async function fetchMoreData(page) {
   if (!apiKey) {
     console.error("API key is not available yet");
     return;
@@ -47,40 +53,39 @@ function fetchMoreData(page) {
     pSize: itemsPerPage,
   };
 
-  $.ajax({
-    url: apiUrl,
-    type: "GET",
-    data: params,
-    dataType: "json",
-    success: function (response) {
-      console.log("Data fetched successfully:", response);
+  try {
+    const response = await $.ajax({
+      url: apiUrl,
+      type: "GET",
+      data: params,
+      dataType: "json",
+    });
 
-      if (
-        response &&
-        response.JobFndtnTosAct &&
-        response.JobFndtnTosAct.length > 0 &&
-        response.JobFndtnTosAct[1].row
-      ) {
-        const externalData = response.JobFndtnTosAct[1].row;
-        listTotalCount = response.JobFndtnTosAct[0].head[0].list_total_count;
-        displayExternalData(externalData);
-        listDisplay.displayListTotalCnt(listTotalCount);
-        if (listTotalCount <= currentPage * itemsPerPage) {
-          $(window).off("scroll", handleScroll);
-        }
-      } else {
-        console.error("No external data available or unexpected response");
-        displayNoResults();
+    console.log("Data fetched successfully:", response);
+
+    if (
+      response &&
+      response.JobFndtnTosAct &&
+      response.JobFndtnTosAct.length > 0 &&
+      response.JobFndtnTosAct[1].row
+    ) {
+      const externalData = response.JobFndtnTosAct[1].row;
+      listTotalCount = response.JobFndtnTosAct[0].head[0].list_total_count;
+      displayExternalData(externalData);
+      listDisplay.displayListTotalCnt(listTotalCount);
+      if (listTotalCount <= currentPage * itemsPerPage) {
+        $(window).off("scroll", handleScroll);
       }
-    },
-    error: function (xhr, status, error) {
-      console.error("Error fetching data:", status, error);
-      displayError();
-    },
-    complete: function () {
-      isLoading = false;
-    },
-  });
+    } else {
+      console.error("No external data available or unexpected response");
+      displayNoResults();
+    }
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    displayError();
+  } finally {
+    isLoading = false;
+  }
 }
 
 function displayExternalData(data) {
