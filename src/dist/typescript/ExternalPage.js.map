@@ -1,1 +1,0 @@
-{"version":3,"file":"ExternalPage.js","sourceRoot":"","sources":["../../src/typescript/ExternalPage.ts"],"names":[],"mappings":"AAAA,OAAO,WAAW,MAAM,kBAAkB,CAAC;AAE3C,QAAQ,CAAC,gBAAgB,CAAC,kBAAkB,EAAE;IAC5C,MAAM,WAAW,GAAG,CAAC,CAAC;IACtB,MAAM,YAAY,GAAG,EAAE,CAAC;IACxB,IAAI,WAAW,CAAC,WAAW,EAAE,YAAY,CAAC,CAAC;AAC7C,CAAC,CAAC,CAAC"}
