@@ -1,0 +1,1 @@
+{"version":3,"file":"get-api-external.js","sourceRoot":"","sources":["../../../src/dist/netlify/get-api-external.js"],"names":[],"mappings":"AAAA,YAAY,CAAC;AACb,OAAO,CAAC,OAAO,GAAG,KAAK;IACnB,OAAO;QACH,UAAU,EAAE,GAAG;QACf,IAAI,EAAE,IAAI,CAAC,SAAS,CAAC,EAAE,MAAM,EAAE,OAAO,CAAC,GAAG,CAAC,eAAe,EAAE,CAAC;KAChE,CAAC;AACN,CAAC,CAAC"}
