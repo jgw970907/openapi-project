@@ -1,22 +1,26 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-import { fetchApiKey } from "../functions/fetchApiKey";
-import { fetchData } from "../functions/fetchData";
-const itemsPerPage = 5;
-let apiKey = "";
-class ListDisplay {
-    constructor() {
-        this.currentPage = 1;
-        this.listTotalCount = 0;
+import { fetchData } from "../functions/fetchData.js";
+import { API_KEY } from "../config/config.js";
+export default class ListDisplay {
+    currentPage = 1;
+    itemsPerPage = 10;
+    listTotalCount = 0;
+    elementId;
+    apiKey;
+    constructor(currentPage, itemsPerPage) {
         this.elementId = "#list-total-count";
-        this.currentPage = 1;
+        this.currentPage = currentPage;
+        this.itemsPerPage = itemsPerPage;
+        this.apiKey = API_KEY || "";
+        this.fetchApiKeyAndData();
+        $(".pagination")
+            .off("click", ".page")
+            .on("click", ".page", (event) => {
+            console.log("this in event handler:", this); // this 확인
+            const page = $(event.target).data("page");
+            this.currentPage = page;
+            console.log("Updated currentPage:", this.currentPage);
+            this.fetchHandler();
+        });
     }
     displayListTotalCnt(totalcount = 0) {
         let notice = $(this.elementId);
@@ -56,37 +60,31 @@ class ListDisplay {
         });
         this.fetchApiKeyAndData();
     }
-    fetchApiKeyAndData() {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const apiKeyResponse = yield fetchApiKey("key");
-                apiKey = apiKeyResponse.apiKey;
-                yield this.fetchInitialData();
-            }
-            catch (error) {
-                this.displayError();
-            }
-        });
+    async fetchApiKeyAndData() {
+        try {
+            await this.fetchHandler();
+        }
+        catch (error) {
+            this.displayError();
+        }
     }
-    fetchInitialData() {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                yield fetchData(this.currentPage, "", "");
-            }
-            catch (error) {
-                this.displayError();
-            }
-        });
+    async fetchHandler() {
+        try {
+            let result = await fetchData(this.currentPage, this.itemsPerPage, "", "", this.apiKey);
+            console.log(this.currentPage, "currentPage");
+            this.handleResponse(result, this.currentPage);
+        }
+        catch (error) {
+            this.displayError();
+        }
     }
-    fetchDataRequest(params) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return $.ajax({
-                url: "https://openapi.gg.go.kr/GGJOBABARECRUSTM",
-                type: "GET",
-                data: params,
-                dataType: "json",
-                cache: false,
-            });
+    async fetchDataRequest(params) {
+        return $.ajax({
+            url: "https://openapi.gg.go.kr/GGJOBABARECRUSTM",
+            type: "GET",
+            data: params,
+            dataType: "json",
+            cache: false,
         });
     }
     // protected async fetchData(page = 1, query: string, queryType = "") {
@@ -107,10 +105,10 @@ class ListDisplay {
     // }
     buildParams(page, query, queryType) {
         const baseParams = {
-            KEY: apiKey,
+            KEY: this.apiKey,
             Type: "json",
             pIndex: page,
-            pSize: 5,
+            pSize: this.itemsPerPage,
             ENTRPRS_NM: "",
             PBANC_CONT: "",
         };
@@ -189,7 +187,7 @@ class ListDisplay {
         $(".job_list").append(errorMessage);
     }
     updatePagination(currentPage) {
-        const totalPages = Math.ceil(this.listTotalCount / itemsPerPage);
+        const totalPages = Math.ceil(this.listTotalCount / this.itemsPerPage);
         const pagesPerGroup = 10;
         const currentGroup = Math.ceil(currentPage / pagesPerGroup);
         const startPage = (currentGroup - 1) * pagesPerGroup + 1;
@@ -215,16 +213,6 @@ class ListDisplay {
         if (currentPage < totalPages) {
             $(".pagination").append(`<span class="page" data-page="${totalPages}">>></span>`);
         }
-        $(".pagination")
-            .off("click", ".page")
-            .on("click", ".page", (event) => {
-            const page = $(event.target).data("page");
-            const query = String($("#searchInput").val());
-            const searchType = String($("#searchType").val());
-            console.log("Fetching page:", page); // 디버깅 로그 추가
-            fetchData(page, query, searchType);
-        });
     }
 }
-export default ListDisplay;
 //# sourceMappingURL=Display.js.map

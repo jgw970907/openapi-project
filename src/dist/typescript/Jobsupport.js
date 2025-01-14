@@ -1,18 +1,13 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-import { fetchApiKey } from "../functions/fetchApiKey";
-import ListDisplay from "./Display";
+import { fetchApiKey } from "../functions/fetchApiKey.js";
 const apiUrl = "https://openapi.gg.go.kr/JobFndtnSportPolocy";
-export class JobSupport {
+export class JobSupportClass {
+    apiKey;
+    currentPage;
+    itemsPerPage;
+    listTotalCount;
+    isLoading;
+    responseData;
     constructor(currentPage, itemsPerPage) {
-        this.listDisplay = new ListDisplay();
         this.apiKey = "";
         this.currentPage = currentPage;
         this.itemsPerPage = itemsPerPage;
@@ -21,73 +16,67 @@ export class JobSupport {
         this.responseData = null;
         $(window).on("scroll", this.handleScroll);
     }
-    fetchApiKeyAndData() {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const apiKeyResponse = yield fetchApiKey("external");
-                this.apiKey = apiKeyResponse.apiKey;
-                yield this.fetchInitialData();
-            }
-            catch (error) {
-                this.listDisplay.displayError();
-            }
-        });
+    async fetchApiKeyAndData() {
+        try {
+            const apiKeyResponse = await fetchApiKey("external");
+            this.apiKey = apiKeyResponse.apiKey;
+            await this.fetchInitialData();
+        }
+        catch (error) {
+            // this.listDisplay.displayError();
+        }
     }
-    fetchInitialData() {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                yield this.fetchMoreData(this.currentPage);
-            }
-            catch (error) {
-                this.listDisplay.displayError();
-            }
-        });
+    async fetchInitialData() {
+        try {
+            await this.fetchMoreData(this.currentPage);
+        }
+        catch (error) {
+            // this.listDisplay.displayError();
+        }
     }
-    fetchMoreData() {
-        return __awaiter(this, arguments, void 0, function* (page = 1) {
-            if (this.isLoading)
-                return;
-            this.isLoading = true;
-            let params = {
-                KEY: this.apiKey,
-                Type: "json",
-                pIndex: page,
-                pSize: this.itemsPerPage,
-            };
-            $.ajax({
-                url: apiUrl,
-                type: "GET",
-                data: params,
-                dataType: "json",
-                success: function (response) {
-                    console.log("Data fetched successfully:", response);
-                    this.responseData = response;
-                    if (this.responseData &&
-                        this.responseData.JobFndtnSportPolocy &&
-                        this.responseData.JobFndtnSportPolocy.length > 0 &&
-                        this.responseData.JobFndtnSportPolocy[1].row) {
-                        const supportData = this.responseData.JobFndtnSportPolocy[1].row;
-                        this.listTotalCount =
-                            this.responseData.JobFndtnSportPolocy[0].head[0].list_total_count;
-                        this.displaySupportData(supportData);
-                        this.listDisplay.displayListTotalCnt(this.listTotalCount);
-                        if (this.listTotalCount <= this.currentPage * this.itemsPerPage) {
-                            $(window).off("scroll", this.handleScroll);
-                        }
+    async fetchMoreData(page = 1) {
+        if (this.isLoading)
+            return;
+        this.isLoading = true;
+        let params = {
+            KEY: this.apiKey,
+            Type: "json",
+            pIndex: page,
+            pSize: this.itemsPerPage,
+        };
+        $.ajax({
+            url: apiUrl,
+            type: "GET",
+            data: params,
+            dataType: "json",
+            success: function (response) {
+                console.log("Data fetched successfully:", response);
+                this.responseData = response;
+                if (this.responseData &&
+                    this.responseData.JobFndtnSportPolocy &&
+                    this.responseData.JobFndtnSportPolocy.length > 0 &&
+                    this.responseData.JobFndtnSportPolocy[1].row) {
+                    const supportData = this.responseData.JobFndtnSportPolocy[1].row;
+                    this.listTotalCount =
+                        this.responseData.JobFndtnSportPolocy[0].head[0].list_total_count;
+                    this.displaySupportData(supportData);
+                    this.listDisplay.displayListTotalCnt(this.listTotalCount);
+                    if (this.listTotalCount <= this.currentPage * this.itemsPerPage) {
+                        $(window).off("scroll", this.handleScroll);
                     }
-                    else {
-                        console.error("No external data available or unexpected response");
-                        this.displayNoResults();
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error("Error fetching data:", status, error);
-                    this.listDisplay.displayError();
-                },
-                complete: function () {
-                    this.isLoading = false;
-                },
-            });
+                }
+                else {
+                    console.error("No external data available or unexpected response");
+                    this.displayNoResults();
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error fetching data:", status, error);
+                this.listDisplay.displayError();
+            },
+            complete: function () {
+                this.isLoading = false;
+            },
         });
     }
     displaySupportData(data) {
