@@ -1,4 +1,3 @@
-import { EXTERNAL_APIKEY } from "../config/config.js";
 import { listTotalCount } from "../functions/listTotalDisplay.js";
 export default class ExternalAct {
     currentPage = 1;
@@ -10,7 +9,7 @@ export default class ExternalAct {
     data;
     constructor(currentPage, itemsPerPage) {
         $(window).on("scroll", this.handleScroll.bind(this)); // this 바인딩
-        this.apiKey = EXTERNAL_APIKEY;
+        this.apiKey = process.env.EXTERNAL_APIKEY;
         // this.listDisplay = new ListDisplay();
         this.apiUrl = "https://openapi.gg.go.kr/JobFndtnTosAct";
         this.currentPage = currentPage;

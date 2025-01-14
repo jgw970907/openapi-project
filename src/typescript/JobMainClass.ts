@@ -1,5 +1,5 @@
 import { listTotalCount } from "../functions/listTotalDisplay.js";
-// import { API_KEY } from "../config/config.js";
+
 import Popup from "./Popup.js";
 
 export default class JobMainClass {

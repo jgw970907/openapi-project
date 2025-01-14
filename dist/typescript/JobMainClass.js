@@ -1,5 +1,4 @@
 import { listTotalCount } from "../functions/listTotalDisplay.js";
-import { API_KEY } from "../config/config.js";
 import Popup from "./Popup.js";
 export default class JobMainClass {
     currentPage = 1;
@@ -12,7 +11,7 @@ export default class JobMainClass {
     constructor(currentPage, itemsPerPage) {
         this.currentPage = currentPage;
         this.itemsPerPage = itemsPerPage;
-        this.apiKey = API_KEY || "";
+        this.apiKey = process.env.JOB_APIKEY;
         this.fetchApiKeyAndData();
         this.initializeEvents();
         this.popup = new Popup();

@@ -1,4 +1,4 @@
-import { API_KEY } from "../config/config.js";
+import { listTotalCount } from "../functions/listTotalDisplay";
 export class EduClass {
     apiKey;
     apiUrl;
@@ -7,7 +7,7 @@ export class EduClass {
     listTotalCount;
     responseData;
     constructor(currentPage, itemsPerPage) {
-        this.apiKey = API_KEY;
+        this.apiKey = process.env.EDU_APIKEY;
         this.apiUrl = "https://openapi.gg.go.kr/JobFndtnEduTraing";
         this.currentPage = currentPage;
         this.itemsPerPage = itemsPerPage;
@@ -59,7 +59,7 @@ export class EduClass {
                         this.responseData.JobFndtnEduTraing[0].head[0].list_total_count;
                     this.displayTrain(trainData);
                     this.updateLoadMoreButton();
-                    // listDisplay.displayListTotalCnt(this.listTotalCount);
+                    listTotalCount(this.listTotalCount);
                 }
                 else {
                     console.error("No train data available or unexpected response");
