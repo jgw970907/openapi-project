@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>경기가 좋아지길-일자리 공고</title>
-    <link rel="stylesheet" href="./css/style.css" />
+    <link rel="stylesheet" href="./src/css/style.css" />
     <script
       src="https://code.jquery.com/jquery-3.7.1.js"
       integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
@@ -14,11 +14,10 @@
       src="https://kit.fontawesome.com/8cdf73bfb7.js"
       crossorigin="anonymous"
     ></script>
-    <script src="./javascript/popup.js"></script>
-    <script type="module" src="./javascript/common.js"></script>
-    <script type="module" src="./javascript/buttonClick.js"></script>
-    <script type="module" src="./javascript/script.js"></script>
-    <script type="module" src="./javascript/imageSlide.js" defer></script>
+    <!-- <script type="module" src="./dist/typescript/Popup.js"></script> -->
+    <script type="module" src="./dist/typescript/Frame.js"></script>
+    <script type="module" src="./dist/typescript/Main.js"></script>
+    <script type="module" src="./dist/typescript/ImageSlide.js" defer></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -32,7 +31,7 @@
     <div class="search">
       <div class="input_wrapper">
         <select name="searchType" id="searchType">
-          <option value="">선택</option>
+          <option value="enterprise">선택</option>
           <option value="enterprise">기업명</option>
           <option value="noticeName">공고명</option>
         </select>
