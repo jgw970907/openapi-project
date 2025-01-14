@@ -1,7 +1,5 @@
-import { fetchApiKey } from "../functions/fetchApiKey.js";
-import { fetchData } from "../functions/fetchData.js";
 import { listTotalCount } from "../functions/listTotalDisplay.js";
-import { API_KEY } from "../config/config.js";
+// import { API_KEY } from "../config/config.js";
 import Popup from "./Popup.js";
 
 export default class JobMainClass {
@@ -10,13 +8,12 @@ export default class JobMainClass {
   listTotalCount: number = 0;
   query: string = "";
   searchType: string = "";
-
   apiKey: string;
   popup: Popup;
   constructor(currentPage: number, itemsPerPage: number) {
     this.currentPage = currentPage;
     this.itemsPerPage = itemsPerPage;
-    this.apiKey = API_KEY || "";
+    this.apiKey = process.env.JOB_APIKEY!;
     this.fetchApiKeyAndData();
     this.initializeEvents();
     this.popup = new Popup();

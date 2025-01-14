@@ -1,4 +1,3 @@
-import { SUPPORT_APIKEY } from "../config/config.js";
 import { listTotalCount } from "../functions/listTotalDisplay.js";
 
 export class JobSupportClass {
@@ -10,7 +9,7 @@ export class JobSupportClass {
   responseData: any;
   apiUrl: string;
   constructor(currentPage: number, itemsPerPage: number) {
-    this.apiKey = SUPPORT_APIKEY;
+    this.apiKey = process.env.JOB_APIKEY!;
     this.apiUrl = "https://openapi.gg.go.kr/JobFndtnSportPolocy";
     this.currentPage = currentPage;
     this.itemsPerPage = itemsPerPage;
