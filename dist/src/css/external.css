@@ -1,0 +1,38 @@
+.external_list {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+  padding: 20px;
+}
+
+.external_list > li {
+  border: 5px solid #615959;
+  padding: 10px 10px 23px 10px;
+  margin-bottom: 20px; /* 요소들 간의 간격 설정 (선택 사항) */
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background-color: white;
+  font-weight: bold;
+  position: relative;
+}
+.external_list > li > hr {
+  height: 3px;
+  width: 90%;
+  background-color: #8a9eaf;
+}
+.detailUrl {
+  position: absolute;
+  width: 100%;
+  bottom: 0px;
+  left: 0px;
+  height: 20px;
+  background-color: #8a9eaf;
+  text-align: center;
+}
+.detailUrl > a {
+  color: white;
+}
+.detailUrl > a:hover {
+  color: #ccc;
+}
