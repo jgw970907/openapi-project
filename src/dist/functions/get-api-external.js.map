@@ -1,0 +1,1 @@
+{"version":3,"file":"get-api-external.js","sourceRoot":"","sources":["../../functions/get-api-external.ts"],"names":[],"mappings":";;;;;;;;;;AAAA,OAAO,CAAC,OAAO,GAAG;;QAChB,OAAO;YACL,UAAU,EAAE,GAAG;YACf,IAAI,EAAE,IAAI,CAAC,SAAS,CAAC,EAAE,MAAM,EAAE,OAAO,CAAC,GAAG,CAAC,eAAe,EAAE,CAAC;SAC9D,CAAC;IACJ,CAAC;CAAA,CAAC"}

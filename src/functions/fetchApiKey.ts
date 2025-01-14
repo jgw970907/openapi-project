@@ -1,6 +1,6 @@
 export async function fetchApiKey(apiname: string) {
   try {
-    const response = await fetch(`/.netlify/functions/get-api-${apiname}`);
+    const response = await fetch(`/src/netlify/functions/get-api-${apiname}`);
     if (!response.ok) {
       throw new Error("Failed to fetch API key");
     }

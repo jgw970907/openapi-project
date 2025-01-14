@@ -1,6 +1,7 @@
 // functions/fetchData.ts
 export async function fetchData(
   page: number = 1,
+  sizePerPage: number = 10,
   query: string = "",
   queryType: string = "",
   apiKey: string = ""
@@ -9,7 +10,7 @@ export async function fetchData(
     KEY: apiKey,
     Type: "json",
     pIndex: page,
-    pSize: 5,
+    pSize: sizePerPage,
     ENTRPRS_NM: queryType === "enterprise" ? query : "",
     PBANC_CONT: queryType === "noticeName" ? query : "",
   };

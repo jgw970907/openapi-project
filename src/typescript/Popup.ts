@@ -1,16 +1,26 @@
-class Popup {
-  popup: HTMLElement;
-  closeBtn: HTMLButtonElement;
-  dontShowAgainCheckbox: HTMLInputElement;
-  okBtn: HTMLButtonElement;
+export default class Popup {
+  popup: HTMLElement | null;
+  closeBtn: HTMLButtonElement | null;
+  dontShowAgainCheckbox: HTMLInputElement | null;
+  okBtn: HTMLButtonElement | null;
+
   constructor() {
-    this.popup = document.getElementById("popup")!;
-    this.closeBtn = document.querySelector(".close-btn") as HTMLButtonElement; // 타입 단언
+    this.popup = document.getElementById("popup");
+    this.closeBtn = document.querySelector(
+      ".close-btn"
+    ) as HTMLButtonElement | null;
     this.dontShowAgainCheckbox = document.getElementById(
       "dontShowAgainCheckbox"
-    )! as HTMLInputElement; // 타입 단언
-    this.okBtn = document.getElementById("okBtn") as HTMLButtonElement; // 타입 단언
-    this.initializeEvents();
+    ) as HTMLInputElement | null;
+    this.okBtn = document.getElementById("okBtn") as HTMLButtonElement | null;
+    if (
+      this.popup &&
+      this.closeBtn &&
+      this.dontShowAgainCheckbox &&
+      this.okBtn
+    ) {
+      this.initializeEvents();
+    }
   }
 
   private setCookie(name: string, value: string, days: number): void {
@@ -27,30 +37,34 @@ class Popup {
   }
 
   public showPopup() {
-    this.popup.style.display = "flex";
+    if (this.popup) {
+      this.popup.style.display = "flex";
+    }
   }
 
   private hidePopup() {
-    this.popup.style.display = "none";
+    if (this.popup) {
+      this.popup.style.display = "none";
+    }
   }
 
   private initializeEvents() {
     // '확인' 버튼 클릭 이벤트
-    this.okBtn.addEventListener("click", () => {
-      if (this.dontShowAgainCheckbox.checked) {
+    this.okBtn?.addEventListener("click", () => {
+      if (this.dontShowAgainCheckbox?.checked) {
         this.setCookie("popupSeen", "true", 7);
       }
       this.hidePopup();
     });
 
     // 닫기 버튼 클릭 이벤트
-    this.closeBtn.addEventListener("click", () => {
+    this.closeBtn?.addEventListener("click", () => {
       this.hidePopup();
     });
 
     // 외부 클릭으로 팝업 닫기
     window.addEventListener("click", (event) => {
-      if (event.target === this.popup) {
+      if (this.popup && event.target === this.popup) {
         this.hidePopup();
       }
     });
@@ -58,7 +72,7 @@ class Popup {
     // 페이지 로드 시 쿠키 확인 후 팝업 표시
     document.addEventListener("DOMContentLoaded", () => {
       const popupSeen = this.getCookie("popupSeen");
-      if (popupSeen !== "true") {
+      if (popupSeen !== "true" && this.popup) {
         this.showPopup();
       }
     });

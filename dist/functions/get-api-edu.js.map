@@ -1,0 +1,1 @@
+{"version":3,"file":"get-api-edu.js","sourceRoot":"","sources":["../../src/functions/get-api-edu.ts"],"names":[],"mappings":";AAAA,OAAO,CAAC,OAAO,GAAG,KAAK;IACrB,OAAO;QACL,UAAU,EAAE,GAAG;QACf,IAAI,EAAE,IAAI,CAAC,SAAS,CAAC,EAAE,MAAM,EAAE,OAAO,CAAC,GAAG,CAAC,UAAU,EAAE,CAAC;KACzD,CAAC;AACJ,CAAC,CAAC"}

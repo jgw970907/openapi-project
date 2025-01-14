@@ -2,11 +2,12 @@
   "name": "openapi",
   "version": "1.0.0",
   "description": "openapi를 활용한 취업생태계 플랫폼",
-  "main": "index.js",
+  "main": "dist/typescript/Main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js",
-    "build": "tsc"
+    "start": "node dist/typescript/Main.js",
+    "build": "tsc",
+    "dev": "ts-node src/typescript/Main.ts"
   },
   "author": "",
   "license": "ISC",
