@@ -10,9 +10,11 @@
 body,
 html {
   width: 1440px;
-  height: 100vh;
+  height: auto;
   background-color: #8a9eaf;
   margin: 0 auto;
+  box-sizing: border-box;
+  position: relative;
 }
 button {
   cursor: pointer;
@@ -127,7 +129,9 @@ button {
 #resetBtn:hover {
   background-color: #662a67;
 }
-
+.contents {
+  margin-bottom: 100px;
+}
 .contents_wrapper {
   margin: 50px auto 0 auto;
   width: 1360px;
