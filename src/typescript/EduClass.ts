@@ -1,5 +1,5 @@
-import { listTotalCount } from "../util/listTotalDisplay";
-import { fetchApiKey } from "../util/fetchApiKey";
+import { listTotalCount } from "../util/listTotalDisplay.js";
+import { fetchApiKey } from "../util/fetchApiKey.js";
 export class EduClass {
   apiKey: string;
   apiUrl: string;

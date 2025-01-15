@@ -13,7 +13,7 @@ export default class JobMainClass {
     constructor(currentPage, itemsPerPage) {
         this.currentPage = currentPage;
         this.itemsPerPage = itemsPerPage;
-        this.apiUrl = "https://openapi.gg.go.kr/JobFndtnTosAct";
+        this.apiUrl = "https://openapi.gg.go.kr/GGJOBABARECRUSTM";
         this.apiKey = "";
         this.fetchApiKeyAndData();
         this.initializeEvents();
@@ -62,10 +62,8 @@ export default class JobMainClass {
     }
     async fetchApiKeyAndData() {
         try {
-            if (!this.apiKey) {
-                const { apiKey } = await fetchApiKey("key");
-                this.apiKey = apiKey;
-            }
+            const { apiKey } = await fetchApiKey("key");
+            this.apiKey = apiKey;
             await this.fetchHandler();
         }
         catch (error) {
