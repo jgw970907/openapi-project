@@ -1,5 +1,6 @@
-import { listTotalCount } from "../functions/listTotalDisplay.js";
-export default class ExternalAct {
+import { fetchApiKey } from "../util/fetchApiKey.js";
+import { listTotalCount } from "../util/listTotalDisplay.js";
+export default class ExternalActClass {
   private currentPage = 1;
   private listTotalCount = 0;
   private itemsPerPage = 10;
@@ -10,9 +11,8 @@ export default class ExternalAct {
 
   constructor(currentPage: number, itemsPerPage: number) {
     $(window).on("scroll", this.handleScroll.bind(this)); // this 바인딩
-    this.apiKey = process.env.EXTERNAL_APIKEY!;
-    // this.listDisplay = new ListDisplay();
     this.apiUrl = "https://openapi.gg.go.kr/JobFndtnTosAct";
+    this.apiKey = "";
     this.currentPage = currentPage;
     this.itemsPerPage = itemsPerPage;
     this.isLoading = false;
@@ -24,6 +24,10 @@ export default class ExternalAct {
   // 서버에서 API 키를 가져오고 데이터를 요청하는 함수
   protected async fetchApiKeyAndData() {
     try {
+      if (!this.apiKey) {
+        const { apiKey } = await fetchApiKey("external");
+        this.apiKey = apiKey;
+      }
       await this.fetchInitialData();
     } catch (error) {
       // this.listDisplay.displayError();
