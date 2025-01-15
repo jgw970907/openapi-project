@@ -1,6 +1,7 @@
 import { listTotalCount } from "../util/listTotalDisplay.js";
 import { fetchApiKey } from "../util/fetchApiKey.js";
 import { loadingSpinner } from "../util/loadingSpinner.js";
+
 export class JobSupportClass {
   currentPage: number;
   itemsPerPage: number;
@@ -9,6 +10,7 @@ export class JobSupportClass {
   responseData: any;
   apiUrl: string;
   apiKey: string;
+  observer: IntersectionObserver | null = null;
   constructor(currentPage: number, itemsPerPage: number) {
     this.apiKey = "";
     this.apiUrl = "https://openapi.gg.go.kr/JobFndtnSportPolocy";
@@ -18,8 +20,40 @@ export class JobSupportClass {
     this.isLoading = false;
     this.responseData = null;
     this.fetchApiKeyAndData();
-    $(window).on("scroll", this.handleScroll);
+    this.initIntersectionObserver();
   }
+
+  private initIntersectionObserver() {
+    const observerOptions = {
+      root: null,
+      rootMargin: "0px",
+      threshold: 1.0,
+    };
+
+    const target = document.querySelector("#infinite-scroll-target");
+
+    if (target) {
+      this.observer = new IntersectionObserver(
+        this.handleIntersection,
+        observerOptions
+      );
+      this.observer.observe(target);
+    }
+  }
+
+  private handleIntersection = (
+    entries: IntersectionObserverEntry[],
+    observer: IntersectionObserver
+  ) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting && !this.isLoading) {
+        this.currentPage++;
+        console.log("currentPage", this.currentPage);
+        this.fetchMoreData(this.currentPage);
+      }
+    });
+  };
+
   public async fetchApiKeyAndData() {
     try {
       await this.fetchInitialData();
@@ -40,6 +74,7 @@ export class JobSupportClass {
     if (this.isLoading) return;
     this.isLoading = true;
     loadingSpinner(this.isLoading);
+
     let params = {
       KEY: this.apiKey,
       Type: "json",
@@ -68,16 +103,14 @@ export class JobSupportClass {
 
           listTotalCount(this.listTotalCount);
           if (this.listTotalCount <= this.currentPage * this.itemsPerPage) {
-            $(window).off("scroll", this.handleScroll);
+            this.stopObserver(); // 더 이상 데이터를 불러오지 않음
           }
         } else {
-          console.error("No external data available or unexpected response");
           this.displayNoResults();
         }
       },
-      error: function (xhr, status, error) {
-        console.error("Error fetching data:", status, error);
-        this.listDisplay.displayError();
+      error: (xhr, status, error) => {
+        this.displayNoResults();
       },
       complete: () => {
         this.isLoading = false;
@@ -104,6 +137,7 @@ export class JobSupportClass {
       $(".support_list").append(listItem);
     });
   }
+
   public displayNoResults() {
     $(".support_list").empty();
     const noResultsMessage = `
@@ -113,14 +147,11 @@ export class JobSupportClass {
   `;
     $(".support_list").append(noResultsMessage);
   }
-  private handleScroll = () => {
-    const scrollPosition = $(window).scrollTop()! + $(window).height()!;
-    const documentHeight = $(document).height()!;
-    console.log(scrollPosition, documentHeight);
-    if (scrollPosition >= documentHeight - 50) {
-      this.currentPage++;
-      console.log("currentpage", this.currentPage);
-      this.fetchMoreData(this.currentPage);
+
+  // IntersectionObserver 중지
+  private stopObserver() {
+    if (this.observer) {
+      this.observer.disconnect();
     }
-  };
+  }
 }

@@ -9,6 +9,7 @@ export class JobSupportClass {
     responseData;
     apiUrl;
     apiKey;
+    observer = null;
     constructor(currentPage, itemsPerPage) {
         this.apiKey = "";
         this.apiUrl = "https://openapi.gg.go.kr/JobFndtnSportPolocy";
@@ -18,8 +19,29 @@ export class JobSupportClass {
         this.isLoading = false;
         this.responseData = null;
         this.fetchApiKeyAndData();
-        $(window).on("scroll", this.handleScroll);
+        this.initIntersectionObserver();
     }
+    initIntersectionObserver() {
+        const observerOptions = {
+            root: null,
+            rootMargin: "0px",
+            threshold: 1.0,
+        };
+        const target = document.querySelector("#infinite-scroll-target");
+        if (target) {
+            this.observer = new IntersectionObserver(this.handleIntersection, observerOptions);
+            this.observer.observe(target);
+        }
+    }
+    handleIntersection = (entries, observer) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting && !this.isLoading) {
+                this.currentPage++;
+                console.log("currentPage", this.currentPage);
+                this.fetchMoreData(this.currentPage);
+            }
+        });
+    };
     async fetchApiKeyAndData() {
         try {
             await this.fetchInitialData();
@@ -65,17 +87,15 @@ export class JobSupportClass {
                     this.displaySupportData(supportData);
                     listTotalCount(this.listTotalCount);
                     if (this.listTotalCount <= this.currentPage * this.itemsPerPage) {
-                        $(window).off("scroll", this.handleScroll);
+                        this.stopObserver(); // 더 이상 데이터를 불러오지 않음
                     }
                 }
                 else {
-                    console.error("No external data available or unexpected response");
                     this.displayNoResults();
                 }
             },
-            error: function (xhr, status, error) {
-                console.error("Error fetching data:", status, error);
-                this.listDisplay.displayError();
+            error: (xhr, status, error) => {
+                this.displayNoResults();
             },
             complete: () => {
                 this.isLoading = false;
@@ -110,15 +130,11 @@ export class JobSupportClass {
   `;
         $(".support_list").append(noResultsMessage);
     }
-    handleScroll = () => {
-        const scrollPosition = $(window).scrollTop() + $(window).height();
-        const documentHeight = $(document).height();
-        console.log(scrollPosition, documentHeight);
-        if (scrollPosition >= documentHeight - 50) {
-            this.currentPage++;
-            console.log("currentpage", this.currentPage);
-            this.fetchMoreData(this.currentPage);
+    // IntersectionObserver 중지
+    stopObserver() {
+        if (this.observer) {
+            this.observer.disconnect();
         }
-    };
+    }
 }
 //# sourceMappingURL=JobsupportClass.js.map

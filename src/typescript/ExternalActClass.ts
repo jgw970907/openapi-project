@@ -9,18 +9,46 @@ export default class ExternalActClass {
   private apiKey: string;
   private apiUrl: string;
   private data: any;
-
+  observer: IntersectionObserver | null = null;
   constructor(currentPage: number, itemsPerPage: number) {
-    $(window).on("scroll", this.handleScroll.bind(this)); // this 바인딩
     this.apiUrl = "https://openapi.gg.go.kr/JobFndtnTosAct";
     this.apiKey = "";
     this.currentPage = currentPage;
     this.itemsPerPage = itemsPerPage;
     this.isLoading = false;
     this.data = null;
-    console.log("fetchMoreData");
     this.fetchApiKeyAndData();
   }
+  private initIntersectionObserver() {
+    const observerOptions = {
+      root: null,
+      rootMargin: "0px",
+      threshold: 1.0,
+    };
+
+    const target = document.querySelector("#infinite-scroll-target");
+
+    if (target) {
+      this.observer = new IntersectionObserver(
+        this.handleIntersection,
+        observerOptions
+      );
+      this.observer.observe(target);
+    }
+  }
+
+  private handleIntersection = (
+    entries: IntersectionObserverEntry[],
+    observer: IntersectionObserver
+  ) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting && !this.isLoading) {
+        this.currentPage++;
+        console.log("currentPage", this.currentPage);
+        this.fetchMoreData(this.currentPage);
+      }
+    });
+  };
 
   // 서버에서 API 키를 가져오고 데이터를 요청하는 함수
   protected async fetchApiKeyAndData() {
@@ -76,17 +104,14 @@ export default class ExternalActClass {
           this.data.JobFndtnTosAct[0].head[0].list_total_count;
         this.displayExternalData(externalData);
         listTotalCount(this.listTotalCount);
-        if (
-          Number(this.listTotalCount) <=
-          Number(this.currentPage) * Number(this.itemsPerPage)
-        ) {
-          $(window).off("scroll", this.handleScroll);
+        if (this.listTotalCount <= this.currentPage * this.itemsPerPage) {
+          this.stopObserver(); // 더 이상 데이터를 불러오지 않음
         }
       } else {
-        // this.listDisplay.displayNoResults();
+        this.displayNoResults();
       }
     } catch (error) {
-      // this.listDisplay.displayError();
+      this.displayNoResults();
     } finally {
       this.isLoading = false;
       loadingSpinner(this.isLoading);
@@ -114,14 +139,20 @@ export default class ExternalActClass {
     });
   }
 
-  // 스크롤 이벤트 핸들러
-  protected handleScroll = () => {
-    const scrollPosition = $(window).scrollTop()!;
-    const documentHeight = $(document).height()!;
+  public displayNoResults() {
+    $(".support_list").empty();
+    const noResultsMessage = `
+    <li>
+      <div class="no_results">검색 결과가 없습니다.</div>
+    </li>
+  `;
+    $(".support_list").append(noResultsMessage);
+  }
 
-    if (scrollPosition >= documentHeight - 50) {
-      this.currentPage++;
-      this.fetchMoreData(this.currentPage);
+  // IntersectionObserver 중지
+  private stopObserver() {
+    if (this.observer) {
+      this.observer.disconnect();
     }
-  };
+  }
 }
