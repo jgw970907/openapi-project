@@ -6,3 +6,10 @@
   [build]
   command = "npx tsc"
   publish = "dist" 
+  functions = "netlify/functions"  # Netlify Functions 경로
+
+
+
+  [dev]
+  functions = "netlify/functions"
+  port = 8888  # 로컬에서 실행할 포트 설정
