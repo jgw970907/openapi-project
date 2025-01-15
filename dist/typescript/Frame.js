@@ -1,5 +1,6 @@
 "use strict";
 document.addEventListener("DOMContentLoaded", () => {
+    const firstHeader = document.getElementById("firstheader");
     fetch("../banner.html")
         .then((response) => response.text())
         .then((data) => {

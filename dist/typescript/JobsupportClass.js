@@ -1,10 +1,11 @@
 import { listTotalCount } from "../util/listTotalDisplay.js";
 import { fetchApiKey } from "../util/fetchApiKey.js";
+import { loadingSpinner } from "../util/loadingSpinner.js";
 export class JobSupportClass {
     currentPage;
     itemsPerPage;
     listTotalCount;
-    isLoading;
+    isLoading = false;
     responseData;
     apiUrl;
     apiKey;
@@ -39,6 +40,7 @@ export class JobSupportClass {
         if (this.isLoading)
             return;
         this.isLoading = true;
+        loadingSpinner(this.isLoading);
         let params = {
             KEY: this.apiKey,
             Type: "json",
@@ -77,6 +79,7 @@ export class JobSupportClass {
             },
             complete: () => {
                 this.isLoading = false;
+                loadingSpinner(this.isLoading);
             },
         });
     }

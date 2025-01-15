@@ -1,5 +1,6 @@
 import { fetchApiKey } from "../util/fetchApiKey.js";
 import { listTotalCount } from "../util/listTotalDisplay.js";
+import { loadingSpinner } from "../util/loadingSpinner.js";
 import Popup from "./Popup.js";
 
 export default class JobMainClass {
@@ -11,6 +12,7 @@ export default class JobMainClass {
   apiKey: string;
   apiUrl: string;
   popup: Popup;
+  isLoading: boolean = false;
   constructor(currentPage: number, itemsPerPage: number) {
     this.currentPage = currentPage;
     this.itemsPerPage = itemsPerPage;
@@ -77,6 +79,8 @@ export default class JobMainClass {
   }
   async fetchHandler() {
     try {
+      this.isLoading = true;
+      loadingSpinner(this.isLoading);
       const params = this.buildParams(
         this.currentPage,
         this.query,
@@ -86,6 +90,9 @@ export default class JobMainClass {
       this.handleResponse(result, this.currentPage);
     } catch (error) {
       this.displayError();
+    } finally {
+      this.isLoading = false;
+      loadingSpinner(this.isLoading);
     }
   }
 

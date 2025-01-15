@@ -1,5 +1,6 @@
 import { fetchApiKey } from "../util/fetchApiKey.js";
 import { listTotalCount } from "../util/listTotalDisplay.js";
+import { loadingSpinner } from "../util/loadingSpinner.js";
 export default class ExternalActClass {
   private currentPage = 1;
   private listTotalCount = 0;
@@ -45,12 +46,11 @@ export default class ExternalActClass {
 
   // 추가 데이터를 가져오는 함수
   protected async fetchMoreData(page: number) {
-    console.log("fetchMoreData");
-
     if (this.isLoading) return;
-    this.isLoading = true;
 
     try {
+      this.isLoading = true;
+      loadingSpinner(this.isLoading);
       const url = new URL(this.apiUrl); // 표준 브라우저 URL API 사용
       url.search = new URLSearchParams({
         Key: this.apiKey,
@@ -89,6 +89,7 @@ export default class ExternalActClass {
       // this.listDisplay.displayError();
     } finally {
       this.isLoading = false;
+      loadingSpinner(this.isLoading);
     }
   }
 

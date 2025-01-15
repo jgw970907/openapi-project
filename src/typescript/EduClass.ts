@@ -1,5 +1,6 @@
 import { listTotalCount } from "../util/listTotalDisplay.js";
 import { fetchApiKey } from "../util/fetchApiKey.js";
+import { loadingSpinner } from "../util/loadingSpinner.js";
 export class EduClass {
   apiKey: string;
   apiUrl: string;
@@ -7,6 +8,7 @@ export class EduClass {
   itemsPerPage: number;
   listTotalCount: number;
   responseData: any;
+  isLoading: boolean = false;
   constructor(currentPage: number, itemsPerPage: number) {
     this.apiUrl = "https://openapi.gg.go.kr/JobFndtnEduTraing";
     this.apiKey = "";
@@ -47,6 +49,8 @@ export class EduClass {
       pIndex: page,
       pSize: this.itemsPerPage,
     };
+    this.isLoading = true;
+    loadingSpinner(this.isLoading);
 
     $.ajax({
       url: this.apiUrl,
@@ -76,6 +80,10 @@ export class EduClass {
       error: function (xhr, status, error) {
         console.error("Error fetching data:", status, error);
         // listDisplay.displayError();
+      },
+      complete: () => {
+        this.isLoading = false;
+        loadingSpinner(this.isLoading);
       },
     });
   }

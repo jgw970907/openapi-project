@@ -11,6 +11,21 @@
   display: flex;
   justify-content: center;
 }
+.train_contents {
+  margin: 50px auto 0 auto;
+  width: 1360px;
+  /* height: auto; */
+  min-height: 800px;
+  background-color: #d9d9d9;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px 20px 0 0;
+  padding: 40px;
+  box-shadow: inset 5px 5px 10px rgba(0, 0, 0, 0.5);
+  /* overflow-y: scroll; */
+}
 .train_list {
   width: 100%;
   display: grid;
