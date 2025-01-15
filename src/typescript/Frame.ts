@@ -16,8 +16,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         $("#header .menu ul li a").each(function () {
           const menuItemHref = $(this).attr("href")!.split("/").pop();
-          if (menuItemHref === currentPage) {
+          if (
+            menuItemHref === currentPage ||
+            (currentPage === "" && menuItemHref === "index.html")
+          ) {
             $(this).addClass("current");
+          } else {
+            $(this).removeClass("current");
           }
         });
       });
