@@ -7,6 +7,7 @@ export async function fetchApiKey(
       throw new Error("Failed to fetch API key");
     }
     const data = await response.json();
+    console.log("API Response:", data);
     return data;
   } catch (error) {
     console.error("Error fetching API key", error);
