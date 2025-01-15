@@ -1,14 +1,15 @@
-import { listTotalCount } from "../functions/listTotalDisplay.js";
+import { listTotalCount } from "../util/listTotalDisplay.js";
+import { fetchApiKey } from "../util/fetchApiKey.js";
 export class JobSupportClass {
-    apiKey;
     currentPage;
     itemsPerPage;
     listTotalCount;
     isLoading;
     responseData;
     apiUrl;
+    apiKey;
     constructor(currentPage, itemsPerPage) {
-        this.apiKey = process.env.JOB_APIKEY;
+        this.apiKey = "";
         this.apiUrl = "https://openapi.gg.go.kr/JobFndtnSportPolocy";
         this.currentPage = currentPage;
         this.itemsPerPage = itemsPerPage;
@@ -26,6 +27,10 @@ export class JobSupportClass {
     }
     async fetchInitialData() {
         try {
+            if (!this.apiKey) {
+                const { apiKey } = await fetchApiKey("support");
+                this.apiKey = apiKey;
+            }
             await this.fetchMoreData(this.currentPage);
         }
         catch (error) { }

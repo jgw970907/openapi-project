@@ -1,4 +1,4 @@
-import ExternalAct from "./ExternalAct.js";
+import ExternalAct from "./ExternalActClass.js";
 document.addEventListener("DOMContentLoaded", function () {
     const currentPage = 1;
     const itemsPerPage = 10;

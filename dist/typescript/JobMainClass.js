@@ -1,4 +1,5 @@
-import { listTotalCount } from "../functions/listTotalDisplay.js";
+import { fetchApiKey } from "../util/fetchApiKey.js";
+import { listTotalCount } from "../util/listTotalDisplay.js";
 import Popup from "./Popup.js";
 export default class JobMainClass {
     currentPage = 1;
@@ -7,11 +8,13 @@ export default class JobMainClass {
     query = "";
     searchType = "";
     apiKey;
+    apiUrl;
     popup;
     constructor(currentPage, itemsPerPage) {
         this.currentPage = currentPage;
         this.itemsPerPage = itemsPerPage;
-        this.apiKey = process.env.JOB_APIKEY;
+        this.apiUrl = "https://openapi.gg.go.kr/JobFndtnTosAct";
+        this.apiKey = "";
         this.fetchApiKeyAndData();
         this.initializeEvents();
         this.popup = new Popup();
@@ -59,6 +62,10 @@ export default class JobMainClass {
     }
     async fetchApiKeyAndData() {
         try {
+            if (!this.apiKey) {
+                const { apiKey } = await fetchApiKey("key");
+                this.apiKey = apiKey;
+            }
             await this.fetchHandler();
         }
         catch (error) {
@@ -77,7 +84,7 @@ export default class JobMainClass {
     }
     async fetchDataRequest(params) {
         return $.ajax({
-            url: "https://openapi.gg.go.kr/GGJOBABARECRUSTM",
+            url: this.apiUrl,
             type: "GET",
             data: params,
             dataType: "json",

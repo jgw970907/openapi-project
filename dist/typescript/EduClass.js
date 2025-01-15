@@ -1,4 +1,5 @@
-import { listTotalCount } from "../functions/listTotalDisplay";
+import { listTotalCount } from "../util/listTotalDisplay";
+import { fetchApiKey } from "../util/fetchApiKey";
 export class EduClass {
     apiKey;
     apiUrl;
@@ -7,8 +8,8 @@ export class EduClass {
     listTotalCount;
     responseData;
     constructor(currentPage, itemsPerPage) {
-        this.apiKey = process.env.EDU_APIKEY;
         this.apiUrl = "https://openapi.gg.go.kr/JobFndtnEduTraing";
+        this.apiKey = "";
         this.currentPage = currentPage;
         this.itemsPerPage = itemsPerPage;
         this.listTotalCount = 0;
@@ -21,6 +22,10 @@ export class EduClass {
     }
     async fetchApiKeyAndData() {
         try {
+            if (!this.apiKey) {
+                const { apiKey } = await fetchApiKey("edu");
+                this.apiKey = apiKey;
+            }
             await this.fetchInitialData();
         }
         catch (error) {
@@ -29,7 +34,7 @@ export class EduClass {
     }
     async fetchInitialData() {
         try {
-            await this.fetchMoreData(this.currentPage); // 초기 데이터 요청
+            await this.fetchMoreData(this.currentPage);
         }
         catch (error) {
             // listDisplay.displayError(); // 오류 발생 시 에러 표시
