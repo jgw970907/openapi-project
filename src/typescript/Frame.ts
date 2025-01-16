@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const firstHeader = document.getElementById("firstheader");
   fetch("../banner.html")
     .then((response) => response.text())
     .then((data) => {
@@ -21,8 +20,10 @@ document.addEventListener("DOMContentLoaded", () => {
             (currentPage === "" && menuItemHref === "index.html")
           ) {
             $(this).addClass("current");
+            $(this).addClass("on");
           } else {
             $(this).removeClass("current");
+            $(this).removeClass("on");
           }
         });
       });

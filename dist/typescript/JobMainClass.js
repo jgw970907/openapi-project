@@ -1,3 +1,4 @@
+import { initializeMenuSelection } from "../util/buttonClick.js";
 import { fetchApiKey } from "../util/fetchApiKey.js";
 import { listTotalCount } from "../util/listTotalDisplay.js";
 import { loadingSpinner } from "../util/loadingSpinner.js";
@@ -22,6 +23,7 @@ export default class JobMainClass {
         this.popup = new Popup();
     }
     initializeEvents() {
+        initializeMenuSelection(".menu-item", "on");
         $(".pagination")
             .off("click", ".page")
             .on("click", ".page", (event) => {

@@ -18,6 +18,7 @@ export default class ExternalActClass {
     this.isLoading = false;
     this.data = null;
     this.fetchApiKeyAndData();
+    this.initIntersectionObserver();
   }
   private initIntersectionObserver() {
     const observerOptions = {
