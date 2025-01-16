@@ -48,10 +48,10 @@ export default class JobMainClass {
     });
 
     $("#resetBtn").on("click", async () => {
-      $("#searchType").val("");
+      this.searchType = "default";
+      $("#searchType").val("default");
       $("#searchInput").val("");
       this.query = "";
-      this.searchType = "";
       this.currentPage = 1; // 페이지 초기화
       this.fetchHandler();
     });
