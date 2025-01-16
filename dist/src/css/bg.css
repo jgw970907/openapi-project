@@ -1,0 +1,42 @@
+.animation-0 {
+  position: absolute;
+  top: 37px;
+  left: -51px;
+  width: 100px;
+  height: 100px;
+}
+.animation-1 {
+  position: absolute;
+  top: 63px;
+  right: -105px;
+  width: 100px;
+  height: 100px;
+}
+.animation-2 {
+  position: absolute;
+  top: 400px;
+  left: -97px;
+  width: 100px;
+  height: 100px;
+}
+.animation-3 {
+  position: absolute;
+  top: 500px;
+  right: -82px;
+  width: 100px;
+  height: 100px;
+}
+.animation-4 {
+  position: absolute;
+  top: 676px;
+  left: -40px;
+  width: 100px;
+  height: 100px;
+}
+.animation-5 {
+  position: absolute;
+  top: 749px;
+  right: -79px;
+  width: 100px;
+  height: 100px;
+}

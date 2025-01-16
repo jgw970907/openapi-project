@@ -6,6 +6,7 @@
     <title>경기가 좋아지길-일자리 공고</title>
     <link rel="stylesheet" href="./src/css/style.css" />
     <link rel="stylesheet" href="./src/css/header.css" />
+    <link rel="stylesheet" href="./src/css/bg.css" />
     <script
       src="https://code.jquery.com/jquery-3.7.1.js"
       integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
@@ -30,19 +31,23 @@
     <header id="header"></header>
     <div id="banner"></div>
     <div class="search">
-      <div class="input_wrapper">
+      <div class="search_wrapper">
+        <div class="gif-container"></div>
         <select name="searchType" id="searchType">
-          <option value="enterprise">선택</option>
+          <option value="default">선택</option>
           <option value="enterprise">기업명</option>
           <option value="noticeName">공고명</option>
         </select>
-        <input
-          type="text"
-          id="searchInput"
-          placeholder="원하시는 공고명이나 기업을 검색하세요."
-        />
-        <button id="searchBtn"><span>검색</span></button>
-        <button id="resetBtn"><span>초기화</span></button>
+        <div class="input_wrapper">
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="원하시는 공고명이나 기업을 검색하세요."
+          />
+          <button id="searchBtn"></button>
+        </div>
+
+        <button id="resetBtn"></button>
       </div>
     </div>
     <div class="contents">
@@ -83,5 +88,9 @@
     <div class="loading-spinner hide">
       <div class="spinner"></div>
     </div>
+    <div class="animation-0"></div>
+    <div class="animation-1"></div>
+    <div class="animation-2"></div>
+    <div class="animation-3"></div>
   </body>
 </html>

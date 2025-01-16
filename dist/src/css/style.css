@@ -7,11 +7,15 @@
   text-decoration: none;
   padding: 0;
 }
-body,
 html {
+  width: 100%;
+  height: auto;
+  background: url("../../public/images/bg/background.png") no-repeat 0 0 / cover;
+}
+body {
   width: 1440px;
   height: auto;
-  background-color: #8a9eaf;
+  background-color: transparent;
   margin: 0 auto;
   box-sizing: border-box;
   position: relative;
@@ -43,9 +47,10 @@ button {
   object-fit: cover;
 }
 .search {
+  position: relative;
   width: 100%;
-  height: 100px;
-  background-color: #fcb0b3;
+  height: 150px;
+  background-color: #ff66c4;
   opacity: 0.8;
   display: flex;
   align-items: center;
@@ -55,7 +60,18 @@ button {
   border-radius: 10px;
   box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.5);
 }
-.input_wrapper {
+.search .gif-container {
+  position: absolute;
+  width: 150px;
+  left: 10px;
+  height: 149px;
+  margin-right: 20px;
+  background-image: url("../../public//images/gif/searchani.gif");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.search_wrapper {
   width: 900px;
   display: flex;
   justify-content: center;
@@ -69,31 +85,74 @@ button {
   border: 3px solid #8a9eaf;
   padding: 0 10px;
 }
-#searchInput {
-  width: 800px;
-  height: 50px;
-  border-radius: 10px;
-  border: 3px solid #8a9eaf;
-  padding: 0 10px;
-}
-#searchBtn,
-#resetBtn {
-  font-weight: bold;
-  width: 80px;
-  height: 60px;
-  line-height: 60px;
+.input_wrapper {
+  position: relative;
+  top: -3px;
+  width: 749px;
+  height: 100px;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #985f99;
-  color: white;
-  border-radius: 10px;
-  border: 3px solid #8a9eaf;
+  justify-content: start;
+  background: url("../../public/images/btn/search_bar.png") no-repeat 3px 18px /
+    contain;
 }
-#searchBtn:hover,
+#searchInput {
+  position: absolute;
+  left: 40px;
+  top: 30px;
+  width: 496px;
+  height: 50px;
+  padding: 0 10px;
+  border: none;
+  background-color: transparent;
+  outline: none;
+  border-radius: 35px;
+}
+
+#searchBtn {
+  border-style: none;
+  outline: none;
+  position: absolute;
+  right: 41px;
+  top: 22px;
+  width: 66px;
+  height: 66px;
+  background: url("../../public/images/btn/search.png") no-repeat 0 0 / contain;
+}
+#searchBtn:hover {
+  border-style: none;
+  outline: none;
+  position: absolute;
+  right: 41px;
+  top: 22px;
+  width: 66px;
+  height: 66px;
+  background: url("../../public/images/btn/search_over.png") no-repeat 0 0 /
+    contain;
+}
+#resetBtn {
+  border-style: none;
+  outline: none;
+  position: absolute;
+  right: 206px;
+  top: 47px;
+  width: 66px;
+  height: 66px;
+  background: url("../../public/images/btn/resetbtn.png") no-repeat 0 0 /
+    contain;
+}
+
 #resetBtn:hover {
-  background-color: #662a67;
+  border-style: none;
+  outline: none;
+  position: absolute;
+  right: 206px;
+  top: 47px;
+  width: 66px;
+  height: 66px;
+  background: url("../../public/images/btn/resetbtn_over.png") no-repeat 0 0 /
+    contain;
 }
+
 .contents {
   margin-bottom: 100px;
 }
@@ -109,8 +168,10 @@ button {
   justify-content: center;
   border-radius: 20px 20px 0 0;
   padding: 40px;
-  box-shadow: inset 5px 5px 10px rgba(0, 0, 0, 0.5);
+
+  box-shadow: inset 0px 0px 22px 0px rgba(0, 0, 0, 0.57);
   /* overflow-y: scroll; */
+  background: url("../../public/images/bg/info_bg.png") repeat 0 0 / cover;
 }
 .contents_wrapper > ul {
   box-sizing: border-box;
@@ -119,11 +180,10 @@ button {
   width: 1200px;
   height: 160px;
   display: flex;
-  background-color: #c8d8e7;
+  background-color: white;
   border-top: 5px solid #985f99;
   border-bottom: 5px solid #985f99;
   margin-top: 20px;
-  border-radius: 5px;
   padding: 10px;
   box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.5);
 }
@@ -195,9 +255,15 @@ button {
   justify-content: center;
   align-items: center;
   margin: 20px auto;
-  background-color: #d9d9d9;
+  background: rgb(222, 221, 231);
+  background: linear-gradient(
+    90deg,
+    rgba(222, 221, 231, 0.3085609243697479) 0%,
+    rgba(255, 13, 241, 0.6194852941176471) 35%,
+    rgba(0, 212, 255, 0.41220238095238093) 100%
+  );
   border-radius: 0 0 20px 20px;
-  box-shadow: inset -5px -5px 10px rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0px 0px 10px 0px rgba(0, 0, 0, 0.57);
 }
 .pagination span,
 .pagination button {
